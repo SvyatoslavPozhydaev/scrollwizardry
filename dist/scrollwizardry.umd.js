@@ -17225,12 +17225,14 @@
 	}();
 
 	var Event$1 = function Event(type, namespace, target, vars) {
+	  var _this = this;
+
 	  classCallCheck(this, Event);
 
 	  vars = vars || {};
-	  for (var key in vars) {
-	    this[key] = vars[key];
-	  }
+	  Object.keys(vars).forEach(function (key) {
+	    _this[key] = vars[key];
+	  });
 	  this.type = type;
 	  this.target = target;
 	  this.currentTarget = target;
@@ -17257,8 +17259,13 @@
 	      var now = new Date();
 	      var time = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2) + ':' + ('0' + now.getSeconds()).slice(-2) + ':' + ('00' + now.getMilliseconds()).slice(-3);
 	      var method = LOG_LEVELS[loglevel - 1];
-	      var args = Array.prototype.splice.call(arguments, 1);
+	      // eslint-disable-next-line
 	      var func = Function.prototype.bind.call(console[method], console);
+
+	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	      }
+
 	      args.unshift(time);
 	      func.apply(console, args);
 	    }
@@ -17786,7 +17793,7 @@
 	      }
 	    });
 
-	    this.on('shift.internal', function (event) {
+	    this.on('shift.internal', function () {
 	      _this.update(); // update scene to reflect new position
 	    });
 
@@ -17803,11 +17810,11 @@
 	      }
 	    });
 
-	    this.on('progress.internal', function (event) {
+	    this.on('progress.internal', function () {
 	      _this._updatePinState();
 	    });
 
-	    this.on('add.internal', function (event) {
+	    this.on('add.internal', function () {
 	      _this._updatePinDimensions();
 	    });
 
@@ -17869,7 +17876,7 @@
 	        return this;
 	      }
 	      names = names.trim().split(' ');
-	      names.forEach(function (fullname, key) {
+	      names.forEach(function (fullname) {
 	        var nameparts = fullname.split('.');
 	        var eventname = nameparts[0];
 	        var namespace = nameparts[1] || '';
@@ -18129,7 +18136,7 @@
 	    }
 	  }, {
 	    key: '_onContainerResize',
-	    value: function _onContainerResize(event) {
+	    value: function _onContainerResize() {
 	      if (this.options.triggerHook > 0) {
 	        this.trigger('shift', { reason: 'containerResize' });
 	      }
@@ -18935,7 +18942,7 @@
 	      }
 
 	      // refresh all scenes
-	      this._sceneObjects.forEach(function (scene, index) {
+	      this._sceneObjects.forEach(function (scene) {
 	        scene.refresh();
 	      });
 
@@ -19204,7 +19211,7 @@
 	    value: function _handleTriggerPositionChange() {
 	      this.updateTriggerGroupPositions();
 
-	      this._sceneObjects.forEach(function (scene, index) {
+	      this._sceneObjects.forEach(function (scene) {
 	        if (scene._indicator) {
 	          scene._indicator._updateBounds();
 	        }

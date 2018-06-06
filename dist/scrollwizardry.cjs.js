@@ -71,9 +71,9 @@ class Util {
 class Event$1 {
   constructor(type, namespace, target, vars) {
     vars = vars || {};
-    for (const key in vars) {
+    Object.keys(vars).forEach((key) => {
       this[key] = vars[key];
-    }
+    });
     this.type = type;
     this.target = target;
     this.currentTarget = target;
@@ -87,7 +87,7 @@ class Event$1 {
 const LOG_LEVELS = ['error', 'warn', 'log'];
 
 class Log {
-  static log(loglevel) {
+  static log(loglevel, ...args) {
     {
       return;
     }
@@ -95,7 +95,7 @@ class Log {
     const now = new Date();
     const time = `${(`0${now.getHours()}`).slice(-2)}:${(`0${now.getMinutes()}`).slice(-2)}:${(`0${now.getSeconds()}`).slice(-2)}:${(`00${now.getMilliseconds()}`).slice(-3)}`;
     const method = LOG_LEVELS[loglevel - 1];
-    const args = Array.prototype.splice.call(arguments, 1);
+    // eslint-disable-next-line
     const func = Function.prototype.bind.call(console[method], console);
     args.unshift(time);
     func.apply(console, args);
@@ -573,7 +573,7 @@ class Scene {
       }
     });
 
-    this.on('shift.internal', (event) => {
+    this.on('shift.internal', () => {
       this.update(); // update scene to reflect new position
     });
 
@@ -590,11 +590,11 @@ class Scene {
       }
     });
 
-    this.on('progress.internal', (event) => {
+    this.on('progress.internal', () => {
       this._updatePinState();
     });
 
-    this.on('add.internal', (event) => {
+    this.on('add.internal', () => {
       this._updatePinDimensions();
     });
 
@@ -648,7 +648,7 @@ class Scene {
       return this;
     }
     names = names.trim().split(' ');
-    names.forEach((fullname, key) => {
+    names.forEach((fullname) => {
       const nameparts = fullname.split('.');
       const eventname = nameparts[0];
       const namespace = nameparts[1] || '';
@@ -882,7 +882,7 @@ class Scene {
     }
   }
 
-  _onContainerResize(event) {
+  _onContainerResize() {
     if (this.options.triggerHook > 0) {
       this.trigger('shift', { reason: 'containerResize' });
     }
@@ -1622,7 +1622,7 @@ class Controller {
     }
 
     // refresh all scenes
-    this._sceneObjects.forEach((scene, index) => {
+    this._sceneObjects.forEach((scene) => {
       scene.refresh();
     });
 
@@ -1833,8 +1833,8 @@ class Controller {
 
   destroy(resetScenes) {
     window.clearTimeout(this._refreshTimeout);
-	
-	let sceneObjectsTmp = this._sceneObjects.map(scene => scene);
+
+    const sceneObjectsTmp = this._sceneObjects.map(scene => scene);
 
     sceneObjectsTmp.forEach(scene => scene.destroy(resetScenes));
 
@@ -1870,7 +1870,7 @@ class Controller {
   _handleTriggerPositionChange() {
     this.updateTriggerGroupPositions();
 
-    this._sceneObjects.forEach((scene, index) => {
+    this._sceneObjects.forEach((scene) => {
       if (scene._indicator) {
         scene._indicator._updateBounds();
       }
